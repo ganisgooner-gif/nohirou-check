@@ -1,0 +1,613 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>脳疲労タイプ診断｜かみふくろう整骨院・整体院</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:-apple-system,BlinkMacSystemFont,'Hiragino Sans','Yu Gothic',sans-serif;background:linear-gradient(135deg,#FFF8F0 0%,#F5F1FF 55%,#EFF7FF 100%);min-height:100vh;display:flex;align-items:flex-start;justify-content:center;padding:2rem 1rem}
+.container{max-width:620px;width:100%}
+.header{position:relative;text-align:center;margin-bottom:2rem;padding-top:1.5rem}
+.header::before,.header::after{content:'';position:absolute;border-radius:50%;filter:blur(28px);opacity:0.55;z-index:0;pointer-events:none}
+.header::before{width:120px;height:120px;background:#AFA9EC;top:-30px;left:8%}
+.header::after{width:100px;height:100px;background:#F2A6D6;top:-10px;right:10%}
+.header h1,.header p{position:relative;z-index:1}
+.spark{position:absolute;width:6px;height:6px;border-radius:50%;z-index:1;animation:sparkle 2.4s ease-in-out infinite}
+.spark.s1{background:#8B82E8;box-shadow:0 0 8px 2px #8B82E8;top:2px;left:18%;animation-delay:0s}
+.spark.s2{background:#E48CC7;box-shadow:0 0 8px 2px #E48CC7;top:14px;right:16%;animation-delay:0.6s}
+.spark.s3{background:#5DCAA5;box-shadow:0 0 6px 2px #5DCAA5;top:-6px;right:32%;animation-delay:1.2s}
+.spark.s4{background:#AFA9EC;box-shadow:0 0 6px 2px #AFA9EC;bottom:6px;left:32%;animation-delay:1.8s}
+@keyframes sparkle{0%,100%{opacity:0.25;transform:scale(0.8)}50%{opacity:1;transform:scale(1.3)}}
+.header h1{font-size:22px;font-weight:800;color:#1a1a1a;margin-bottom:6px}
+.header p{font-size:14px;color:#888;line-height:1.6}
+.card{background:#fff;border-radius:28px;padding:2rem 1.5rem;box-shadow:0 12px 32px rgba(127,119,221,0.14)}
+.progress-wrap{margin-bottom:1.75rem}
+.progress-bar{height:5px;background:#eee;border-radius:99px;margin-bottom:0.75rem;overflow:hidden}
+.progress-fill{height:100%;background:linear-gradient(90deg,#7F77DD,#E48CC7);border-radius:99px;transition:width 0.4s ease}
+.dot-row{display:flex;gap:4px;justify-content:center;flex-wrap:wrap}
+.dot{width:6px;height:6px;border-radius:50%;background:#e0e0e0;transition:all 0.2s}
+.dot.done{background:#7F77DD}
+.dot.current{background:#7F77DD;width:16px;border-radius:99px}
+.q-counter{font-size:13px;color:#aaa;text-align:center;margin-bottom:0.5rem}
+.q-category{display:none}
+.q-text{font-size:18px;font-weight:600;color:#1a1a1a;line-height:1.65;text-align:center;margin-bottom:2.25rem;min-height:58px;text-wrap:balance;word-break:normal;overflow-wrap:anywhere}
+.scale-wrap{display:flex;flex-direction:column;align-items:center;gap:1rem;margin-bottom:2rem}
+.circles{display:flex;gap:14px;align-items:center;justify-content:center}
+.circle-btn{border-radius:50%;border:3px solid;background:transparent;cursor:pointer;transition:transform 0.2s cubic-bezier(.34,1.56,.64,1),background 0.15s;outline:none;flex-shrink:0}
+.circle-btn:hover{transform:scale(1.18)}
+.circle-btn:active{transform:scale(0.9)}
+.circle-btn.selected{animation:circlePop 0.35s cubic-bezier(.34,1.56,.64,1)}
+@keyframes circlePop{0%{transform:scale(1)}50%{transform:scale(1.35)}100%{transform:scale(1)}}
+.c1{width:54px;height:54px;border-color:#1D9E75}
+.c2{width:46px;height:46px;border-color:#5DCAA5}
+.c3{width:38px;height:38px;border-color:#ccc}
+.c4{width:46px;height:46px;border-color:#AFA9EC}
+.c5{width:54px;height:54px;border-color:#7F77DD}
+.c1.selected{background:#1D9E75}
+.c2.selected{background:#5DCAA5}
+.c3.selected{background:#ccc}
+.c4.selected{background:#AFA9EC}
+.c5.selected{background:#7F77DD}
+.scale-labels{display:flex;justify-content:space-between;width:100%;max-width:290px;font-size:13px;font-weight:500}
+.scale-labels .lbl-l{color:#1D9E75}
+.scale-labels .lbl-r{color:#7F77DD}
+.nav-row{display:flex;justify-content:space-between;align-items:center}
+.nav-btn{padding:0.65rem 1.5rem;border-radius:99px;border:1.5px solid #e0e0e0;background:transparent;color:#888;font-size:14px;cursor:pointer;transition:all 0.15s;font-family:inherit}
+.nav-btn:hover{background:#f5f5f5}
+.nav-btn:disabled{opacity:0.25;cursor:default}
+.nav-btn.primary{background:linear-gradient(135deg,#8B82E8,#E48CC7);border-color:transparent;color:#fff;font-weight:700;box-shadow:0 6px 16px rgba(139,130,232,0.35)}
+.nav-btn.primary:hover{transform:translateY(-2px);box-shadow:0 8px 20px rgba(139,130,232,0.45)}
+.result{display:none}
+.result.show{display:block}
+.result-title{font-size:20px;font-weight:700;text-align:center;color:#1a1a1a;margin-bottom:6px}
+.result-sub{font-size:14px;color:#888;text-align:center;margin-bottom:1.5rem;line-height:1.6}
+.balance-badge{text-align:center;margin-bottom:1.5rem}
+.score-card{display:flex;align-items:center;justify-content:center;gap:16px;margin-bottom:1.5rem;padding:1.1rem 1.4rem;border-radius:20px;background:linear-gradient(135deg,#FBF9FF,#FFF6FA);border:1px solid rgba(139,130,232,0.15)}
+.score-rank{width:60px;height:60px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:26px;font-weight:800;color:#fff;flex-shrink:0;box-shadow:0 6px 14px rgba(0,0,0,0.18)}
+.rank-S{background:linear-gradient(135deg,#FFD76E,#FFB627)}
+.rank-A{background:linear-gradient(135deg,#8B82E8,#E48CC7)}
+.rank-B{background:linear-gradient(135deg,#5DCAA5,#4FA3D1)}
+.rank-C{background:linear-gradient(135deg,#FFB067,#FF8A5B)}
+.rank-D{background:linear-gradient(135deg,#FF8A8A,#E24B4A)}
+.score-main{text-align:left}
+.score-caption{font-size:11px;color:#999;font-weight:600;letter-spacing:0.05em;margin-bottom:2px}
+.score-number{font-size:32px;font-weight:800;color:#1a1a1a;line-height:1}
+.score-unit{font-size:15px;font-weight:600;margin-left:2px;color:#888}
+.score-label{font-size:13px;color:#666;margin-top:4px;font-weight:700}
+.compare-card{background:linear-gradient(135deg,#F0FAFF,#F5F9FF);border:1px solid rgba(79,163,209,0.2);border-radius:14px;padding:0.9rem 1.1rem;margin-bottom:1.5rem}
+.compare-title{font-size:12px;font-weight:700;color:#3C7A9E;margin-bottom:6px}
+.compare-score-row{font-size:13px;color:#333;margin-bottom:6px;padding-bottom:6px;border-bottom:1px dashed rgba(79,163,209,0.3)}
+.compare-item{font-size:13px;color:#444;padding:2px 0;line-height:1.6}
+.compare-hint{font-size:12px;color:#888;text-align:center;font-weight:500}
+.badge{display:inline-block;padding:0.4rem 1.2rem;border-radius:99px;font-size:13px;font-weight:600}
+.badge.good{background:#E1F5EE;color:#085041}
+.badge.mild{background:#FFF9E6;color:#7A5000}
+.badge.moderate{background:#FFEECC;color:#7A3800}
+.badge.severe{background:#FFECEC;color:#8B1A1A}
+.fullbar-section{margin-bottom:2rem}
+.fullbar-title{font-size:13px;font-weight:600;color:#555;margin-bottom:1rem;padding-bottom:0.5rem;border-bottom:1px solid #f0f0f0}
+.fullbar-row{display:flex;align-items:center;gap:8px;margin-bottom:8px}
+.fullbar-label{font-size:12px;width:95px;flex-shrink:0;color:#333;line-height:1.35;text-align:right}
+.fullbar-track{flex:1;height:10px;background:#f0f0f0;border-radius:99px;overflow:hidden}
+.fullbar-fill{height:100%;border-radius:99px;transition:width 0.7s ease}
+.fullbar-fill.overuse{background:#E24B4A}
+.fullbar-fill.dormant{background:#1D9E75}
+.fullbar-fill.neutral{background:#B0AADE}
+.fullbar-score{font-size:11px;width:20px;text-align:right;color:#aaa;flex-shrink:0}
+.fullbar-tag{font-size:10px;padding:1px 6px;border-radius:99px;flex-shrink:0;font-weight:600}
+.fullbar-tag.overuse{background:#FFECEC;color:#A32D2D}
+.fullbar-tag.dormant{background:#E1F5EE;color:#085041}
+.fullbar-tag.neutral{display:none}
+.advice-card{border-radius:14px;padding:1rem 1.25rem;margin-bottom:1rem}
+.advice-card.red{background:#FFF5F5;border:1px solid #FBBFBF}
+.advice-card.green{background:#F0FAF5;border:1px solid #9FE1CB}
+.advice-card.combo{background:#F5F4FF;border:1px solid #C4C0F0}
+.advice-card.clinic{background:#EEEDFE;border:1px solid #AFA9EC}
+.advice-head{font-size:14px;font-weight:600;margin-bottom:10px}
+.advice-head.red{color:#A32D2D}
+.advice-head.green{color:#085041}
+.advice-head.combo{color:#3C3489}
+.advice-head.clinic{color:#3C3489}
+.advice-brain{font-size:12px;color:#888;margin-bottom:10px}
+.advice-block{margin-bottom:10px}
+.advice-block-title{font-size:12px;font-weight:600;color:#555;margin-bottom:4px}
+.advice-item{font-size:13px;color:#555;padding:2px 0;line-height:1.65}
+.advice-clinic-item{font-size:13px;color:#534AB7;padding:2px 0;line-height:1.65}
+.section-divider{height:1px;background:#f0f0f0;margin:1.5rem 0}
+.ref-section{margin-bottom:1.5rem}
+.ref-title{font-size:13px;font-weight:600;color:#555;margin-bottom:0.75rem;padding-bottom:0.5rem;border-bottom:1px solid #f0f0f0}
+.ref-table{width:100%;border-collapse:collapse;font-size:12px}
+.ref-table th{background:#f5f5f5;padding:6px 8px;text-align:left;color:#555;font-weight:600;border-bottom:1px solid #eee}
+.ref-table td{padding:6px 8px;border-bottom:1px solid #f5f5f5;color:#444;line-height:1.5;vertical-align:top}
+.ref-table tr:last-child td{border-bottom:none}
+.ref-table tr.hl-over td{background:#FFF5F5}
+.ref-table tr.hl-dorm td{background:#F0FAF5}
+.ref-dot{display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:4px;vertical-align:middle}
+.cta-card{background:#EEEDFE;border:1px solid #AFA9EC;border-radius:14px;padding:1.25rem;margin-top:1.5rem;text-align:center}
+.cta-title{font-size:15px;font-weight:600;color:#3C3489;margin-bottom:8px}
+.cta-body{font-size:13px;color:#534AB7;line-height:1.7}
+.restart-btn{margin-top:1.5rem;display:block;width:100%;padding:0.75rem;border-radius:10px;border:1.5px solid #e0e0e0;background:transparent;color:#888;font-size:14px;cursor:pointer;font-family:inherit}
+.restart-btn:hover{background:#f5f5f5}
+.no-result{text-align:center;padding:1rem;background:#F0FAF5;border-radius:12px;border:1px solid #9FE1CB;color:#085041;font-size:14px;line-height:1.7;margin-bottom:1.5rem}
+</style>
+</head>
+<body>
+<div class="container">
+  <div class="header">
+    <span class="spark s1"></span><span class="spark s2"></span><span class="spark s3"></span><span class="spark s4"></span>
+    <h1>🧠 脳疲労タイプ診断</h1>
+    <p>今日の活動を振り返りながら答えてください<br>使いすぎている脳の回路と、眠っている回路がわかります</p>
+  </div>
+  <div class="card">
+    <div id="q-screen">
+      <div class="progress-wrap">
+        <div class="progress-bar"><div class="progress-fill" id="prog"></div></div>
+        <div class="dot-row" id="dot-row"></div>
+      </div>
+      <div class="q-counter" id="q-counter">1 / 10</div>
+      <div class="q-category" id="q-category"></div>
+      <div class="q-text" id="q-text"></div>
+      <div class="scale-wrap">
+        <div class="circles">
+          <button class="circle-btn c1" data-val="5" onclick="selectVal(5)"></button>
+          <button class="circle-btn c2" data-val="4" onclick="selectVal(4)"></button>
+          <button class="circle-btn c3" data-val="3" onclick="selectVal(3)"></button>
+          <button class="circle-btn c4" data-val="2" onclick="selectVal(2)"></button>
+          <button class="circle-btn c5" data-val="1" onclick="selectVal(1)"></button>
+        </div>
+        <div class="scale-labels">
+          <span class="lbl-l">そう思う</span>
+          <span class="lbl-r">そう思わない</span>
+        </div>
+      </div>
+      <div class="nav-row">
+        <button class="nav-btn" id="prev-btn" onclick="prev()" disabled>← 戻る</button>
+        <button class="nav-btn primary" id="next-btn" onclick="next()" disabled>次へ →</button>
+      </div>
+    </div>
+    <div class="result" id="result-screen"></div>
+  </div>
+</div>
+
+<script>
+// ===== カテゴリー基本情報（5カテゴリー版：司令塔・感情・記憶・運動・ぼんやり） =====
+var categoryMeta={
+  command:{category:"司令塔",label:"司令塔",brain:"前頭前野・頭頂連合野・言語野（ブローカ野／ウェルニッケ野）",emoji:"🧠"},
+  emotion:{category:"感情",label:"感情",brain:"扁桃体・前部帯状回・視床下部・脳幹・島皮質",emoji:"💗"},
+  memory:{category:"記憶",label:"記憶",brain:"海馬・前頭前野・基底核・小脳",emoji:"🧩"},
+  movement:{category:"運動",label:"運動",brain:"小脳・基底核・一次運動野・運動前野・前庭神経系",emoji:"🏃"},
+  mindwander:{category:"ぼんやり",label:"ぼんやり",brain:"デフォルトモードネットワーク（DMN）・前頭前野の活動低下",emoji:"☁️"}
+};
+
+// ===== カテゴリーごとの設問プール（各10問。追加していくと自動的に出題バリエーションが増える） =====
+// invert:true は「そう思う」＝その回路が眠っている（やらなかった）、という向きの設問
+var questionPool={
+  command:[
+    {text:"今日は話す・聞く・読む・書くことが多かったと感じた",invert:false},
+    {text:"メールやチャットのやり取りで、言葉選びに疲れた",invert:false},
+    {text:"資料や書類を読み込む時間が長かった",invert:false},
+    {text:"資料作成やデータ入力などのデスクワークが多かった",invert:false},
+    {text:"数字やグラフを見比べて考える時間が長かった",invert:false},
+    {text:"「どう説明すればわかりやすいか」を考える場面が多かった",invert:false},
+    {text:"会議や打ち合わせで、何かを決める場面が多かった",invert:false},
+    {text:"「どっちがいいだろう」と選択に迷う場面が多かった",invert:false},
+    {text:"集中力を切らさないように意識し続ける時間が長かった",invert:false},
+    {text:"周りの音や人の動きが気になって、集中が途切れることがあった",invert:false}
+  ],
+  emotion:[
+    {text:"感情を表に出さないよう、気持ちを抑える場面が多かった",invert:false},
+    {text:"苛立ちや不安を感じても、顔や態度には出さないようにした",invert:false},
+    {text:"誰かの機嫌や反応を気にしながら過ごす時間が長かった",invert:false},
+    {text:"言いたいことを飲み込んで、我慢する場面があった",invert:false},
+    {text:"些細なことで、イライラや不安が繰り返し湧いてきた",invert:false},
+    {text:"息が浅くなったり、胸のあたりが締め付けられる感覚があった",invert:false},
+    {text:"緊張する場面が多く、肩や体に力が入りっぱなしだった",invert:false},
+    {text:"予定外の出来事に、とっさに対応しなければならない場面があった",invert:false},
+    {text:"急な連絡や割り込みに、反射的に反応することが多かった",invert:false},
+    {text:"ヒヤッとする瞬間があり、一瞬身構えることがあった",invert:false}
+  ],
+  memory:[
+    {text:"新しく覚えることが多く、頭の中がいっぱいになった",invert:false},
+    {text:"複数の予定やタスクを同時に頭に入れておく必要があった",invert:false},
+    {text:"「あれ、さっき何しようとしてたっけ」と忘れることがあった",invert:false},
+    {text:"名前や顔を覚えることに気を使う場面が多かった",invert:false},
+    {text:"メモを取らないと覚えていられないと感じることがあった",invert:false},
+    {text:"昨日や数日前のことを思い出そうとして、なかなか出てこなかった",invert:false},
+    {text:"新しいやり方や手順を覚えようとする場面があった",invert:false},
+    {text:"人から聞いた話をあとで思い出そうとして、記憶をたどることがあった",invert:false},
+    {text:"複数の作業を同時に進めながら、それぞれの内容を覚えておく必要があった",invert:false},
+    {text:"「これ前も聞いたな」と思いながら、内容を思い出せないことがあった",invert:false}
+  ],
+  movement:[
+    {text:"今日は体を動かす時間がほとんどなかった",invert:true},
+    {text:"手先を使う細かい作業や、丁寧な動きをする場面がなかった",invert:true},
+    {text:"座りっぱなし・同じ姿勢のままで過ごす時間が長かった",invert:true},
+    {text:"姿勢を意識したり、体の位置を感じる場面がなかった",invert:true},
+    {text:"歩いたり、体を揺らしたりする時間がほとんどなかった",invert:true},
+    {text:"階段や坂道など、バランスを使う場面がなかった",invert:true},
+    {text:"スポーツや運動らしい運動をする機会がなかった",invert:true},
+    {text:"体を使ったリズミカルな動き（ダンス・ジョギングなど）をしなかった",invert:true},
+    {text:"手や体を使って何かを作ったり、組み立てたりする作業がなかった",invert:true},
+    {text:"一日を振り返って、体を動かした実感がほとんどなかった",invert:true}
+  ],
+  mindwander:[
+    {text:"何もしない時間、ぼーっとする時間がまったくなかった",invert:true},
+    {text:"新しいアイデアを考えたり、自由に発想する時間がなかった",invert:true},
+    {text:"頭を空っぽにして過ごす時間がなかった",invert:true},
+    {text:"「特に理由もなく」何かを考える余裕がなかった",invert:true},
+    {text:"時間を忘れて何かに没頭するような体験がなかった",invert:true},
+    {text:"スマホやタスクから離れて、ただ景色を眺めるような時間がなかった",invert:true},
+    {text:"誰にも急かされず、自分のペースで過ごす時間がなかった",invert:true},
+    {text:"入浴中や移動中に、ふと考えごとをする余裕がなかった",invert:true},
+    {text:"「面白そう」と感じることに時間を使う余裕がなかった",invert:true},
+    {text:"一日を振り返って、心から落ち着ける時間がほとんどなかった",invert:true}
+  ]
+};
+
+var categoryOrder=["command","emotion","memory","movement","mindwander"];
+
+// 1カテゴリーあたり何問出題するか（プールを増やしてもここは変えなくてよい）
+var QUESTIONS_PER_CATEGORY=2;
+
+function shuffleArray(arr){
+  var a=arr.slice();
+  for(var i=a.length-1;i>0;i--){
+    var j=Math.floor(Math.random()*(i+1));
+    var tmp=a[i];a[i]=a[j];a[j]=tmp;
+  }
+  return a;
+}
+
+// カテゴリーのプールから重複なくn問だけランダムに選ぶ
+function sampleQuestions(pool,n){
+  var shuffled=shuffleArray(pool);
+  return shuffled.slice(0,Math.min(n,shuffled.length));
+}
+
+// 毎回のセッションで出題する10問（5カテゴリー×2問。プール数が増えれば自動的に組み合わせが増える）
+function buildQuestions(){
+  var result=[];
+  categoryOrder.forEach(function(key){
+    var meta=categoryMeta[key];
+    var picked=sampleQuestions(questionPool[key],QUESTIONS_PER_CATEGORY);
+    picked.forEach(function(q){
+      result.push({text:q.text,category:meta.category,key:key,label:meta.label,brain:meta.brain,invert:q.invert});
+    });
+  });
+  return shuffleArray(result); // カテゴリー順ではなく毎回バラバラの順で出題
+}
+
+var questions=buildQuestions();
+
+// ===== 眠っている回路への回復プログラム（5カテゴリー版） =====
+var recoveryAdvice={
+  command:{
+    tonight:["日記や明日の予定を3行だけ書き出す","家計簿や簡単な数字の整理を10分だけやってみる"],
+    week:["週2回、文章を声に出して読む時間をつくる","小さな決断を自分の意思で素早く行う練習をする"],
+    clinic:["当院の休息プログラムの目標設計セッションで、考える機会を意図的につくる","施術後に方針を一緒に言語化し、思考の回路を軽く動かす"]
+  },
+  emotion:{
+    tonight:["今日感じたことを一つだけ言葉にしてみる","好きな音楽や映画で意図的に感情を動かしてみる"],
+    week:["信頼できる人と本音で話す時間をつくる","感情日記を3日だけ続けてみる"],
+    clinic:["島皮質・扁桃体に働きかける呼吸法を施術に取り入れる","当院の休息プログラムで感情と行動のつながりを言語化するセッションを受ける"]
+  },
+  memory:{
+    tonight:["今日印象に残ったことを3つ書き出す","寝る前に今日の出来事を時系列で振り返る"],
+    week:["新しいことを一つ意図的に覚える（単語・ルート・料理など）","読んだ本や記事の内容を誰かに話してみる"],
+    clinic:["有酸素運動指導でBDNF分泌を促し、海馬の働きをサポートする","ピラティスで手続き記憶（体で覚える）の回路を刺激する"]
+  },
+  movement:{
+    tonight:["寝る前に片足立ち30秒×左右をやってみる","5分だけ好きな音楽に合わせて体を揺らす"],
+    week:["週2回、10分のウォーキングでかかとから着地することを意識する","裸足で家の中を歩く時間をつくる"],
+    clinic:["ピラティスで体幹・前庭神経系・固有感覚を統合的に再教育する","姿勢評価から、どの動きが不足しているかを施術で確認する"]
+  },
+  mindwander:{
+    tonight:["入浴中はスマホを持ち込まず、ぼーっとする時間をつくる","寝る前に明日やることを書き出して頭を空にする"],
+    week:["週3回、10分間何もしない時間をカレンダーに入れる","自然の中を歩く時間を習慣にする"],
+    clinic:["呼吸再教育でDMNが働きやすい身体の状態をつくる","当院の休息プログラムの行動設計で「余白の時間」を習慣化する"]
+  }
+};
+
+// ===== 疲弊1位の回路への今夜の回復アクション（5カテゴリー版） =====
+var overuseAdvice={
+  command:["静かな時間を30分つくり、考える作業を今夜は休む","音楽を聴きながらぼーっとする時間をつくる","入浴中はスマホを持ち込まない"],
+  emotion:["一人になれる時間を意識的に確保する","腹式呼吸を5分行う","笑える動画やコンテンツで意識を切り替える"],
+  memory:["新しい情報のインプットを今日は止める","睡眠を優先する（記憶の整理は睡眠中に進む）","頭の中にあることを紙に書き出してリセットする"],
+  movement:["ストレッチや軽い入浴で筋肉をほぐす","今日はしっかり睡眠をとり、体を休める時間を優先する","激しい運動は翌日に控える"],
+  mindwander:["今日はあえて1つだけ集中して取り組むタスクを決める","スケジュールを軽く見直し、次の一歩を決める","散歩から戻ったら、思いついたことを一つメモに残す"]
+};
+
+// ===== 複合パターン判定（5カテゴリー版） =====
+var combos=[
+  {keys:["command","emotion"],title:"頭と心が同時に限界に近づいています",msg:"前頭前野と扁桃体が同時にフル稼働している状態です。今夜は考えることをやめて、深呼吸に意識を向けてください。"},
+  {keys:["command","memory"],title:"頭のなかで同時にいくつものことを処理し続けています",msg:"思考と記憶の回路が両方酷使されています。今夜は新しい情報を入れず、頭を空にする時間をつくってください。"},
+  {keys:["emotion","memory"],title:"気を張りながら覚えることが多かったようです",msg:"感情を抑えながら記憶する作業が重なっています。今夜は安心できる環境で、何も覚えようとしない時間をつくってください。"},
+  {keys:["movement","mindwander"],title:"体も心も、まったく休まっていません",msg:"体を動かす回路もぼんやりする回路も、両方眠ったままです。明日は5分でもいいので、体を動かして頭を空にする時間をつくってください。"}
+];
+
+// ===== 参考表（5カテゴリー版） =====
+var refTable=[
+  {label:"司令塔",brain:"前頭前野・頭頂連合野・言語野（ブローカ野／ウェルニッケ野）",key:"command"},
+  {label:"感情",brain:"扁桃体・前部帯状回・視床下部・脳幹・島皮質",key:"emotion"},
+  {label:"記憶",brain:"海馬・前頭前野・基底核・小脳",key:"memory"},
+  {label:"運動",brain:"小脳・基底核・一次運動野・運動前野・前庭神経系",key:"movement"},
+  {label:"ぼんやり",brain:"デフォルトモードネットワーク（DMN）・前頭前野の活動低下",key:"mindwander"}
+];
+
+var answers={};
+var current=0;
+
+function initDots(){
+  var d=document.getElementById('dot-row');d.innerHTML='';
+  for(var i=0;i<questions.length;i++){
+    var s=document.createElement('div');
+    s.className='dot'+(i===0?' current':'');s.id='dot'+i;d.appendChild(s);
+  }
+}
+function updateDots(){
+  for(var i=0;i<questions.length;i++){
+    var el=document.getElementById('dot'+i);
+    if(i===current)el.className='dot current';
+    else if(answers[i]!==undefined)el.className='dot done';
+    else el.className='dot';
+  }
+}
+function renderQ(){
+  var q=questions[current];
+  document.getElementById('q-text').textContent=q.text;
+  document.getElementById('q-category').textContent=q.category;
+  document.getElementById('q-counter').textContent=(current+1)+' / '+questions.length;
+  document.getElementById('prog').style.width=Math.round((current+1)/questions.length*100)+'%';
+  document.querySelectorAll('.circle-btn').forEach(function(b){
+    b.classList.remove('selected');
+    if(answers[current]!==undefined&&parseInt(b.dataset.val)===answers[current])b.classList.add('selected');
+  });
+  document.getElementById('next-btn').disabled=(answers[current]===undefined);
+  document.getElementById('prev-btn').disabled=(current===0);
+  updateDots();
+}
+function selectVal(val){
+  answers[current]=val;
+  document.querySelectorAll('.circle-btn').forEach(function(b){b.classList.remove('selected');});
+  document.querySelector('[data-val="'+val+'"]').classList.add('selected');
+  document.getElementById('next-btn').disabled=false;
+  setTimeout(function(){
+    if(current<questions.length-1){current++;renderQ();}else showResult();
+  },380);
+}
+function next(){if(answers[current]===undefined)return;if(current<questions.length-1){current++;renderQ();}else showResult();}
+function prev(){if(current>0){current--;renderQ();}}
+
+function calcScores(){
+  var totals={};var counts={};
+  questions.forEach(function(q,i){
+    if(!totals[q.key]){totals[q.key]=0;counts[q.key]=0;}
+    var raw=answers[i]||3;
+    totals[q.key]+=(q.invert?(6-raw):raw);
+    counts[q.key]++;
+  });
+  return categoryOrder.map(function(k){
+    var q=questions.find(function(q){return q.key===k;});
+    return{key:k,label:q.label,brain:q.brain,score:parseFloat((totals[k]/counts[k]).toFixed(2))};
+  });
+}
+
+function calcFatigueScore(scored){
+  var byKey={};
+  scored.forEach(function(s){byKey[s.key]=s.score;});
+  // command/emotion/memory は高いほど疲弊、movement/mindwander は低いほど不足（6-scoreで疲労側に揃える）
+  var fatigueSum=byKey.command+byKey.emotion+byKey.memory+(6-byKey.movement)+(6-byKey.mindwander);
+  var fatigue=Math.round(((fatigueSum-5)/20)*100); // 0〜100、高いほど脳疲労度が高い
+  fatigue=Math.max(0,Math.min(100,fatigue));
+  var rank,label;
+  if(fatigue<20){rank='S';label='絶好調タイプ';}
+  else if(fatigue<40){rank='A';label='バランス良好タイプ';}
+  else if(fatigue<60){rank='B';label='ややお疲れタイプ';}
+  else if(fatigue<80){rank='C';label='お疲れ気味タイプ';}
+  else{rank='D';label='要注意タイプ';}
+  return{score:fatigue,rank:rank,label:label};
+}
+
+function getSeverity(scores){
+  var over=scores.filter(function(x){return x.score>=4.0;});
+  if(!over.length)return'good';
+  var max=over[0].score;
+  if(max>=4.8)return'severe';
+  if(max>=4.3)return'moderate';
+  return'mild';
+}
+
+function findCombo(keys){
+  for(var i=0;i<combos.length;i++){
+    var c=combos[i];
+    if(c.keys.filter(function(k){return keys.indexOf(k)>=0;}).length>=2)return c;
+  }
+  return null;
+}
+
+function buildRecoveryCard(item){
+  var r=recoveryAdvice[item.key];
+  if(!r)return'';
+  var h='<div class="advice-card green">';
+  h+='<div class="advice-head green">🟢 眠っている回路：'+(categoryMeta[item.key]?categoryMeta[item.key].emoji:'')+' '+item.label+'</div>';
+  h+='<div class="advice-brain">関連する脳の部位：'+item.brain+'</div>';
+  h+='<div class="advice-block"><div class="advice-block-title">⏰ 今夜できること</div>';
+  r.tonight.forEach(function(a){h+='<div class="advice-item">・'+a+'</div>';});
+  h+='</div>';
+  h+='<div class="advice-block"><div class="advice-block-title">📅 今週やること</div>';
+  r.week.forEach(function(a){h+='<div class="advice-item">・'+a+'</div>';});
+  h+='</div>';
+  h+='<div class="advice-block"><div class="advice-block-title">🏥 当院でできること</div>';
+  r.clinic.forEach(function(a){h+='<div class="advice-clinic-item">・'+a+'</div>';});
+  h+='</div>';
+  h+='</div>';
+  return h;
+}
+
+// ===== 前回結果の保存・比較（localStorageのみ・同一端末限定の軽量版） =====
+var PREV_RESULT_KEY='nohirouCheckLastResult_v1';
+var COMPARE_THRESHOLD=0.6; // これ以上の差があれば「変化あり」とみなす（1〜5点スケール）
+
+function loadPreviousResult(){
+  try{
+    var raw=localStorage.getItem(PREV_RESULT_KEY);
+    if(!raw)return null;
+    var data=JSON.parse(raw);
+    if(!data||!data.scores)return null;
+    // 全カテゴリー分そろっているか確認（カテゴリー構成が変わった古いデータは無視）
+    var ok=categoryOrder.every(function(k){return typeof data.scores[k]==='number';});
+    return ok?data:null;
+  }catch(e){return null;}
+}
+
+function saveCurrentResult(scored){
+  try{
+    var data={ts:Date.now(),scores:{}};
+    scored.forEach(function(s){data.scores[s.key]=s.score;});
+    localStorage.setItem(PREV_RESULT_KEY,JSON.stringify(data));
+  }catch(e){/* 保存できない環境（プライベートモード等）では何もしない */}
+}
+
+// movement/mindwander は「スコアが高い＝良い」なので、疲労方向にそろえてから比較する
+function fatigueDirection(key,score){
+  return(key==='movement'||key==='mindwander')?(6-score):score;
+}
+
+function compareWithPrevious(scored,prevScores){
+  return categoryOrder.map(function(k){
+    var meta=categoryMeta[k];
+    var cur=scored.find(function(s){return s.key===k;}).score;
+    var prev=prevScores[k];
+    var delta=fatigueDirection(k,cur)-fatigueDirection(k,prev);
+    return{key:k,label:meta.label,emoji:meta.emoji,delta:delta};
+  }).filter(function(item){return Math.abs(item.delta)>=COMPARE_THRESHOLD;})
+    .sort(function(a,b){return Math.abs(b.delta)-Math.abs(a.delta);});
+}
+
+function showResult(){
+  document.getElementById('q-screen').style.display='none';
+  var rs=document.getElementById('result-screen');
+  rs.classList.add('show');
+
+  var scored=calcScores();
+  var sortedByScore=[].concat(scored).sort(function(a,b){return b.score-a.score;});
+  var overuse=sortedByScore.filter(function(x){return x.score>=4.0;}).slice(0,3);
+  var dormant=sortedByScore.filter(function(x){return x.score<=2.0;}).reverse().slice(0,3);
+  var severity=getSeverity(sortedByScore);
+
+  var fatigue=calcFatigueScore(sortedByScore);
+  var overuseKeys=overuse.map(function(x){return x.key;});
+  var dormantKeys=dormant.map(function(x){return x.key;});
+  var allKeys=overuseKeys.concat(dormantKeys);
+
+  var prevResult=loadPreviousResult();
+  var comparison=prevResult?compareWithPrevious(scored,prevResult.scores):[];
+  var prevFatigue=prevResult?calcFatigueScore(categoryOrder.map(function(k){return{key:k,score:prevResult.scores[k]};})):null;
+
+  var html='<div class="result-title">あなたの脳疲労レポート</div>';
+  html+='<div class="result-sub">使いすぎている回路と、眠っている回路がわかりました</div>';
+  html+='<div class="score-card"><div class="score-rank rank-'+fatigue.rank+'">'+fatigue.rank+'</div><div class="score-main"><div class="score-caption">脳疲労度</div><div class="score-number">'+fatigue.score+'<span class="score-unit">点</span></div><div class="score-label">'+fatigue.label+'</div></div></div>';
+
+  // 前回との比較（同じ端末での再受診時のみ）
+  if(prevResult){
+    html+='<div class="compare-card"><div class="compare-title">📈 前回との比較</div>';
+    var scoreTrendIcon=fatigue.score<prevFatigue.score?'🔽':(fatigue.score>prevFatigue.score?'🔼':'➡️');
+    html+='<div class="compare-score-row">前回：<b>'+prevFatigue.score+'点</b>（'+prevFatigue.rank+'ランク） '+scoreTrendIcon+' 今回：<b>'+fatigue.score+'点</b>（'+fatigue.rank+'ランク）</div>';
+    if(comparison.length>0){
+      comparison.slice(0,2).forEach(function(item){
+        var trend=item.delta<0?'回復傾向です':'お疲れ気味です';
+        html+='<div class="compare-item">'+item.emoji+' '+item.label+'：前回より'+trend+'</div>';
+      });
+    } else {
+      html+='<div class="compare-item">カテゴリー別では大きな変化はありませんでした</div>';
+    }
+    html+='</div>';
+  } else {
+    html+='<div class="compare-card compare-hint">📈 次回もこの端末で受けると、前回との比較が見られます</div>';
+  }
+
+  // 横棒グラフ
+  html+='<div class="fullbar-section"><div class="fullbar-title">脳の回路バランス（全5項目）</div>';
+  scored.forEach(function(item){
+    var pct=Math.round((item.score-1)/4*100);
+    var isOver=overuseKeys.indexOf(item.key)>=0;
+    var isDorm=dormantKeys.indexOf(item.key)>=0;
+    var cls=isOver?'overuse':isDorm?'dormant':'neutral';
+    var tag=isOver?'<span class="fullbar-tag overuse">疲弊</span>':isDorm?'<span class="fullbar-tag dormant">眠り</span>':'<span class="fullbar-tag neutral"></span>';
+    html+='<div class="fullbar-row"><div class="fullbar-label">'+(categoryMeta[item.key]?categoryMeta[item.key].emoji:'')+' '+item.label+'</div><div class="fullbar-track"><div class="fullbar-fill '+cls+'" style="width:0%" data-w="'+pct+'%"></div></div><div class="fullbar-score">'+item.score+'</div>'+tag+'</div>';
+  });
+  html+='</div>';
+
+  if(severity==='good'){
+    html+='<div class="no-result">今日はすべての脳回路がバランスよく使われています。<br>このまま良質な睡眠を取ることが最高の回復です。</div>';
+  } else {
+    // 複合パターン
+    var combo=findCombo(allKeys);
+    if(combo){
+      html+='<div class="advice-card combo"><div class="advice-head combo">🔗 複合パターン：'+combo.title+'</div><div class="advice-item">'+combo.msg+'</div></div>';
+    }
+
+    // 疲弊1位
+    if(overuse.length>0){
+      var top=overuse[0];
+      html+='<div class="advice-card red"><div class="advice-head red">🔴 今日いちばん疲弊した回路：'+(categoryMeta[top.key]?categoryMeta[top.key].emoji:'')+' '+top.label+'</div>';
+      html+='<div class="advice-brain">関連する脳の部位：'+top.brain+'</div>';
+      html+='<div class="advice-block-title" style="font-size:12px;font-weight:600;color:#555;margin-bottom:4px">今夜の回復アクション</div>';
+      (overuseAdvice[top.key]||[]).forEach(function(a){html+='<div class="advice-item">・'+a+'</div>';});
+      html+='</div>';
+    }
+
+    html+='<div class="section-divider"></div>';
+
+    // 眠っている回路トップ3（各3ブロック）
+    if(dormant.length>0){
+      html+='<div style="font-size:14px;font-weight:600;color:#085041;margin-bottom:1rem">🟢 眠っている回路の回復プログラム</div>';
+      dormant.forEach(function(item){
+        html+=buildRecoveryCard(item);
+      });
+    }
+  }
+
+  // 参考表
+  html+='<div class="section-divider"></div>';
+  html+='<div class="ref-section"><div class="ref-title">📊 参考：日常の活動と脳の部位の関係</div>';
+  html+='<table class="ref-table"><thead><tr><th>活動の種類</th><th>主な脳の部位</th></tr></thead><tbody>';
+  refTable.forEach(function(row){
+    var isOver=overuseKeys.indexOf(row.key)>=0;
+    var isDorm=dormantKeys.indexOf(row.key)>=0;
+    var cls=isOver?' class="hl-over"':isDorm?' class="hl-dorm"':'';
+    var dot=isOver?'<span class="ref-dot" style="background:#E24B4A"></span>':isDorm?'<span class="ref-dot" style="background:#1D9E75"></span>':'';
+    html+='<tr'+cls+'><td>'+dot+(categoryMeta[row.key]?categoryMeta[row.key].emoji:'')+' '+row.label+'</td><td>'+row.brain+'</td></tr>';
+  });
+  html+='</tbody></table>';
+  html+='<div style="font-size:11px;color:#aaa;margin-top:6px"><span style="display:inline-flex;align-items:center;gap:3px"><span class="ref-dot" style="background:#E24B4A"></span>疲弊している回路</span>　<span style="display:inline-flex;align-items:center;gap:3px"><span class="ref-dot" style="background:#1D9E75"></span>眠っている回路</span></div>';
+  html+='</div>';
+
+  html+='<div class="cta-card"><div class="cta-title">脳のバランスを身体から整えたい方へ</div>';
+  html+='<div class="cta-body">かみふくろう整骨院・整体院では、脳の回路バランスに基づいた姿勢・呼吸・行動設計のプログラムをご提供しています。まずはLINEでお気軽にご相談ください。</div>';
+  html+='<div style="margin-top:1rem;display:flex;flex-direction:column;align-items:center;gap:0.75rem">';
+  html+='<a href="https://lin.ee/tdz9yCv" target="_blank" style="display:inline-flex;align-items:center;justify-content:center;gap:8px;background:#06C755;color:#fff;font-weight:700;font-size:15px;padding:0.75rem 2rem;border-radius:99px;text-decoration:none;letter-spacing:0.03em;width:100%">&#10004; LINEで友だち追加して相談する</a>';
+  html+='<a href="https://kamifukurou.com" target="_blank" style="display:inline-flex;align-items:center;justify-content:center;gap:8px;background:transparent;color:#534AB7;font-weight:600;font-size:14px;padding:0.6rem 2rem;border-radius:99px;text-decoration:none;border:1.5px solid #AFA9EC;width:100%">&#127968; かみふくろう整骨院・整体院 公式サイトを見る</a>';
+  html+='</div></div>';
+  html+='<button class="restart-btn" onclick="restart()">↺ もう一度診断する</button>';
+
+  rs.innerHTML=html;
+  setTimeout(function(){
+    rs.querySelectorAll('[data-w]').forEach(function(b){b.style.width=b.getAttribute('data-w');});
+  },100);
+  saveCurrentResult(scored); // 今回の結果を「次回比較用」として保存
+}
+
+function restart(){
+  answers={};current=0;
+  document.getElementById('q-screen').style.display='block';
+  var rs=document.getElementById('result-screen');
+  rs.classList.remove('show');rs.innerHTML='';
+  renderQ();
+}
+
+initDots();renderQ();
+</script>
+</body>
+</html>
